@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 
 import argparse
 
-mpl.rc('text', usetex=True)
+mpl.rc('text', usetex=False)
 
 FILE_NAME = Path(__file__).with_suffix('')
+
 
 # Utils to get common STYLES object and setup matplotlib
 # for all plots
@@ -60,6 +61,8 @@ DEFAULT_WIDTH = 3.25
 DEFAULT_DOUBLE_WIDTH = 6.75
 DEFAULT_HEIGHT = 2.
 
+df = pd.read_parquet('figures/benchmark_bilevel_ijcnn1.parquet')
+print(df.columns)
 
 def get_param(name, param='period_frac'):
     params = {}
@@ -109,7 +112,7 @@ if __name__ == "__main__":
 
     BENCHMARKS_CONFIG = dict(
         ijcnn1=(
-            "ijcnn1_resubmission_last.parquet", 'objective_value_func',
+            "benchopt_ijcnn1.parquet", 'objective_value_func',
             'objective_value_func', ((1, 480), (0, 2e9)), 1e-4,
             r'Optimality ~$h(x^t) -h^*$', 'log', ('linear', 'linear'), None,
             64, 2**17, 49_990, 91_701
