@@ -429,72 +429,72 @@ def _sopage(variance_reduction, inner_oracle, outer_oracle, inner_var, outer_var
     if seed is not None:
         np.random.seed(seed)
 
-    # for i in range(max_iter):
-    #     inner_step_size, outer_step_size = lr_scheduler.get_lr()
-
-    #     # Get all gradient for the batch
-    #     slice_inner, vr_inner = inner_sampler.get_batch()
-    #     _, grad_inner_var, hvp, cross_v = inner_oracle.oracles(inner_var, outer_var, v, slice_inner, inverse='id')
-    #     slice_outer, vr_outer = outer_sampler.get_batch()
-    #     grad_in_outer, grad_out_outer = outer_oracle.grad(inner_var, outer_var, slice_outer)
-    #     # here memory_*[-1] corresponds to the running average of the gradients
-    #     grad_inner_var = variance_reduction(grad_inner_var, memory['inner_grad'], vr_inner)
-    #     hvp = variance_reduction(hvp, memory['hvp'], vr_inner)
-    #     cross_v = variance_reduction(cross_v, memory['cross_v'], vr_inner)
-
-    #     grad_in_outer = variance_reduction(grad_in_outer, memory['grad_in_outer'], vr_outer)
-    #     grad_out_outer = variance_reduction(grad_out_outer, memory['grad_out_outer'], vr_outer)
-
-    #     # Update the variables
-    #     inner_var -= inner_step_size * grad_inner_var
-    #     v -= inner_step_size * (hvp + grad_in_outer)
-    #     outer_var -= outer_step_size * (cross_v + grad_out_outer)
-
-    # return inner_var, outer_var, v
-
-    inner_var_pre = inner_var.copy()
-    outer_var_pre = outer_var.copy()
-    v_pre = v.copy()
-
     for i in range(max_iter):
-
         inner_step_size, outer_step_size = lr_scheduler.get_lr()
 
-        # Step.1 - get all gradients and compute the implicit gradient.
-        slice_inner, _ = inner_sampler.get_batch()
+        # Get all gradient for the batch
+        slice_inner, vr_inner = inner_sampler.get_batch()
         _, grad_inner_var, hvp, cross_v = inner_oracle.oracles(inner_var, outer_var, v, slice_inner, inverse='id')
-        _, grad_inner_var_pre, hvp_pre, cross_v_pre = inner_oracle.oracles(inner_var_pre, outer_var_pre, v_pre, slice_inner, inverse='id')
-
-        slice_outer, _ = outer_sampler.get_batch()
+        slice_outer, vr_outer = outer_sampler.get_batch()
         grad_in_outer, grad_out_outer = outer_oracle.grad(inner_var, outer_var, slice_outer)
-        grad_in_outer_pre, grad_out_outer_pre = outer_oracle.grad(inner_var_pre, outer_var_pre, slice_outer)
+        # here memory_*[-1] corresponds to the running average of the gradients
+        grad_inner_var = variance_reduction(grad_inner_var, memory['inner_grad'], vr_inner)
+        hvp = variance_reduction(hvp, memory['hvp'], vr_inner)
+        cross_v = variance_reduction(cross_v, memory['cross_v'], vr_inner)
 
-        # Step.2 update page estimator
-        if i==0:
-            page_inner_var_pre = grad_inner_var.copy()
-            page_v_pre = hvp.copy() + grad_in_outer.copy()
-            page_outer_var_pre = cross_v.copy() + grad_out_outer.copy()
-        else:
-            page_inner_var_pre = page_inner_var.copy()
-            page_v_pre = page_v.copy()
-            page_outer_var_pre = page_outer_var.copy()
+        grad_in_outer = variance_reduction(grad_in_outer, memory['grad_in_outer'], vr_outer)
+        grad_out_outer = variance_reduction(grad_out_outer, memory['grad_out_outer'], vr_outer)
 
-        page_inner_var = grad_inner_var - grad_inner_var_pre + page_inner_var_pre
-        page_v = hvp + grad_in_outer - (hvp_pre + grad_in_outer_pre) + page_v_pre
-        page_outer_var = cross_v + grad_out_outer - (cross_v_pre + grad_out_outer_pre) + page_outer_var_pre
+        # Update the variables
+        inner_var -= inner_step_size * grad_inner_var
+        v -= inner_step_size * (hvp + grad_in_outer)
+        outer_var -= outer_step_size * (cross_v + grad_out_outer)
 
-        # Step.3 - update the variables
-        inner_var_pre = inner_var
-        outer_var_pre = outer_var
-        v_pre = v_pre
+    return inner_var, outer_var, v
 
-        inner_var -= inner_step_size * page_inner_var
-        v -= inner_step_size * page_v
-        outer_var -= outer_step_size * page_outer_var
+    # inner_var_pre = inner_var.copy()
+    # outer_var_pre = outer_var.copy()
+    # v_pre = v.copy()
+
+    # for i in range(max_iter):
+
+    #     inner_step_size, outer_step_size = lr_scheduler.get_lr()
+
+    #     # Step.1 - get all gradients and compute the implicit gradient.
+    #     slice_inner, _ = inner_sampler.get_batch()
+    #     _, grad_inner_var, hvp, cross_v = inner_oracle.oracles(inner_var, outer_var, v, slice_inner, inverse='id')
+    #     _, grad_inner_var_pre, hvp_pre, cross_v_pre = inner_oracle.oracles(inner_var_pre, outer_var_pre, v_pre, slice_inner, inverse='id')
+
+    #     slice_outer, _ = outer_sampler.get_batch()
+    #     grad_in_outer, grad_out_outer = outer_oracle.grad(inner_var, outer_var, slice_outer)
+    #     grad_in_outer_pre, grad_out_outer_pre = outer_oracle.grad(inner_var_pre, outer_var_pre, slice_outer)
+
+    #     # Step.2 update page estimator
+    #     if i==0:
+    #         page_inner_var_pre = grad_inner_var.copy()
+    #         page_v_pre = hvp.copy() + grad_in_outer.copy()
+    #         page_outer_var_pre = cross_v.copy() + grad_out_outer.copy()
+    #     else:
+    #         page_inner_var_pre = page_inner_var.copy()
+    #         page_v_pre = page_v.copy()
+    #         page_outer_var_pre = page_outer_var.copy()
+
+    #     page_inner_var = grad_inner_var - grad_inner_var_pre + page_inner_var_pre
+    #     page_v = hvp + grad_in_outer - (hvp_pre + grad_in_outer_pre) + page_v_pre
+    #     page_outer_var = cross_v + grad_out_outer - (cross_v_pre + grad_out_outer_pre) + page_outer_var_pre
+
+    #     # Step.3 - update the variables
+    #     inner_var_pre = inner_var
+    #     outer_var_pre = outer_var
+    #     v_pre = v_pre
+
+    #     inner_var -= inner_step_size * page_inner_var
+    #     v -= inner_step_size * page_v
+    #     outer_var -= outer_step_size * page_outer_var
 
         
 
-    return inner_var, outer_var, v
+    # return inner_var, outer_var, v
 
 
 @partial(jax.jit, static_argnums=(0, 1),

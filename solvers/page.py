@@ -34,10 +34,10 @@ class Solver(BaseSolver):
 
     # any parameter defined here is accessible as a class attribute
     parameters = {
-        'step_size': [0.2],
-        'outer_ratio': [1.],
-        'batch_size': [16],
-        'eval_freq': [128],
+        'step_size': [.1],
+        'outer_ratio': [0.001],
+        'batch_size': [64],
+        'eval_freq': [512],
         'random_state': [1],
         'framework': ["none"],
     }
@@ -223,15 +223,16 @@ def page(inner_oracle, outer_oracle, inner_var, outer_var, v,
     outer_var_pre = outer_var.copy()
     v_pre = v.copy()
 
+
     for i in range(max_iter):
 
         inner_step_size, outer_step_size = lr_scheduler.get_lr()
 
         p = 0.01
         rp = 1 if random.random() < p else 0
-        if i == 0 or rp==1:
+        if i==0 or rp==1:
             slice_inner, _ = inner_full_sampler.get_batch()
-            slice_outer, _ = inner_full_sampler.get_batch()
+            slice_outer, _ = outer_full_sampler.get_batch()
         else:
             slice_inner, _ = inner_sampler.get_batch()
             slice_outer, _ = outer_sampler.get_batch()
@@ -267,8 +268,11 @@ def page(inner_oracle, outer_oracle, inner_var, outer_var, v,
         outer_var_pre = outer_var
         v_pre = v_pre
 
+        r_z = 2.5
         inner_var -= inner_step_size * page_inner_var
         v -= inner_step_size * page_v
+        # print(np.linalg.norm(v))
+        v = v / max(1, np.linalg.norm(v) / r_z)
         outer_var -= outer_step_size * page_outer_var       
 
     return inner_var, outer_var, v

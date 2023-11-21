@@ -55,7 +55,7 @@ class Dataset(BaseDataset):
     requirements = ["scikit-learn"]
 
     parameters = {
-        'ratio': [0.5, 0.7, 0.9],
+        'ratio': [0.5],
         'random_state': [32],
         'oracle': ['datacleaning'],
     }
