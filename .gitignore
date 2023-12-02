@@ -16,7 +16,8 @@ benchopt.ini
 .DS_Store
 coverage.xml
 
-figures/
+figures/*.csv
+figures/*.parquet
 *.gz
 *.ipynb
 *.npy
