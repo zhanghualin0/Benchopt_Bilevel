@@ -34,11 +34,12 @@ class Solver(BaseSolver):
 
     # any parameter defined here is accessible as a class attribute
     parameters = {
-        'step_size': [.1],
+        'step_size': [2.0],
         'outer_ratio': [0.001],
         'batch_size': [64],
         'eval_freq': [512],
         'random_state': [1],
+        'r_z': [2.5],
         'framework': ["none"],
     }
 
@@ -144,6 +145,7 @@ class Solver(BaseSolver):
         # Init variables
         inner_var = self.inner_var.copy()
         outer_var = self.outer_var.copy()
+        r_z = self.r_z
         if self.framework == "jax":
             v = jnp.zeros_like(inner_var)
             # Init lr scheduler
@@ -197,7 +199,7 @@ class Solver(BaseSolver):
                     outer_sampler=outer_sampler,
                     inner_full_sampler=inner_full_sampler,
                     outer_full_sampler=outer_full_sampler,
-                    lr_scheduler=lr_scheduler, max_iter=eval_freq,
+                    lr_scheduler=lr_scheduler, max_iter=eval_freq, r_z = r_z,
                     seed=rng.randint(constants.MAX_SEED)
                 )
             memory_end = get_memory()
@@ -212,7 +214,7 @@ class Solver(BaseSolver):
 
 
 def page(inner_oracle, outer_oracle, inner_var, outer_var, v,
-         inner_sampler=None, outer_sampler=None, inner_full_sampler=None, outer_full_sampler=None, lr_scheduler=None, max_iter=1,
+         inner_sampler=None, outer_sampler=None, inner_full_sampler=None, outer_full_sampler=None, lr_scheduler=None, max_iter=1, r_z=2.5,
          seed=None):
 
     # Set seed for randomness
@@ -268,7 +270,7 @@ def page(inner_oracle, outer_oracle, inner_var, outer_var, v,
         outer_var_pre = outer_var
         v_pre = v_pre
 
-        r_z = 2.5
+        # r_z = 5.5
         inner_var -= inner_step_size * page_inner_var
         v -= inner_step_size * page_v
         # print(np.linalg.norm(v))

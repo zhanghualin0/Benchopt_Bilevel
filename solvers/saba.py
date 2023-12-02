@@ -38,8 +38,8 @@ class Solver(BaseSolver):
 
     # any parameter defined here is accessible as a class attribute
     parameters = {
-        'step_size': [0.1],
-        'outer_ratio': [0.01],
+        'step_size': [0.0001],
+        'outer_ratio': [1.0],
         'batch_size': [64],
         'mode_init_memory': ["zero"],
         'eval_freq': [512],

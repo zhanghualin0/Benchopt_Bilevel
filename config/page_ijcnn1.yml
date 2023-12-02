@@ -1,0 +1,12 @@
+objective:
+  - Bilevel Optimization
+dataset:
+  - ijcnn1
+solver:
+  - SABA[batch_size=64,eval_freq=512,framework=none,mode_init_memory=zero,outer_ratio=1.0,step_size=0.125,random_state=[1],framework=none]
+  - SOBA[batch_size=64,eval_freq=512,framework=none,outer_ratio=0.01,step_size=0.03125,random_state=[1],framework=none]
+  - PAGE[batch_size=64,eval_freq=512,framework=none,outer_ratio=1.0,step_size=2.0,random_state=[1],r_z=5.5,framework=none]
+n-repetitions: 1
+max-runs: 1000
+timeout: 900
+output: ijcnn1_best_params
