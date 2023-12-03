@@ -25,7 +25,7 @@ sns.set(style="whitegrid")
 
 # Creating the plot
 plt.figure(figsize=(8, 6))
-sns.lineplot(data=csv_data, x='stop_val', y='objective_value_func', hue='simple_solver_name', marker='o')
+sns.lineplot(data=csv_data, x='stop_val', y='objective_value_func', hue='simple_solver_name')
 
 # Adding plot labels and title
 plt.xlabel('Iteration')
@@ -35,4 +35,9 @@ plt.legend(title='Solvers')
 
 # Show the plot
 plt.tight_layout()
+
+# Save the figure
+output_file_path = 'figures/ijcnn1.pdf' 
+plt.savefig(output_file_path)
+
 plt.show()
