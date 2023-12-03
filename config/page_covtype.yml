@@ -1,0 +1,16 @@
+objective:
+  - Bilevel Optimization
+dataset:
+  - covtype
+solver:
+  # - SABA[batch_size=64,eval_freq=2048,step_size=0.01,outer_ratio=1.0,random_state=[1],framework=none]
+  # - SOBA[batch_size=64,eval_freq=2048,framework=none,outer_ratio=0.01,step_size=1.0,random_state=[1],framework=none]
+  # - PAGE[batch_size=64,eval_freq=2048,framework=none,outer_ratio=1.0,step_size=2.0,random_state=[1],r_z=2.5,framework=none]
+  - SABA[batch_size=64,eval_freq=512,step_size=0.01,outer_ratio=1.0,random_state=[1],framework=none]
+  - SOBA[batch_size=64,eval_freq=512,framework=none,outer_ratio=1.0,step_size=0.01,random_state=[1],framework=none]
+  - PAGE[batch_size=64,eval_freq=512,framework=none,outer_ratio=0.11,step_size=0.5,random_state=[1],r_z=2.5,framework=none]
+n-repetitions: 1
+max-runs: 100
+timeout: 900
+output: covtype_best_params
+

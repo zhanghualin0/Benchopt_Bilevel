@@ -25,13 +25,17 @@ sns.set(style="whitegrid")
 
 # Creating the plot
 plt.figure(figsize=(8, 6))
-sns.lineplot(data=csv_data, x='time', y='objective_test_accuracy', hue='simple_solver_name', marker='o')
+sns.lineplot(data=csv_data, x='time', y='objective_test_accuracy', hue='simple_solver_name')
 
 # Adding plot labels and title
 plt.xlabel('Time(sec)')
 plt.ylabel('Test error')
 plt.xscale('log')
 plt.legend(title='Solvers')
+
+# Save the figure
+output_file_path = 'figures/mnist.pdf' 
+plt.savefig(output_file_path)
 
 # Show the plot
 plt.tight_layout()
