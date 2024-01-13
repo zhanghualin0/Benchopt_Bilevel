@@ -106,27 +106,3 @@ You can also use config files to setup the benchmark run:
 where `X.yml` is a config file. See https://benchopt.github.io/index.html#run-a-benchmark for an example of a config file. This will possibly launch a huge grid search. When available, you can rather use the file `X_best_params.yml` in order to launch an experiment with a single set of parameters for each solver.
 
 Use `benchopt run -h` for more details about these options, or visit https://benchopt.github.io/api.html.
-
-
-Cite
-----
-
-If you use this benchmark in your research project, please cite the following paper:
-
-.. code-block::
-
-   @inproceedings{saba,
-      title = {A Framework for Bilevel Optimization That Enables Stochastic and Global Variance Reduction Algorithms},
-      booktitle = {Advances in {{Neural Information Processing Systems}} ({{NeurIPS}})},
-      author = {Dagr{\'e}ou, Mathieu and Ablin, Pierre and Vaiter, Samuel and Moreau, Thomas},
-      year = {2022}
-   }
-
-
-References 
-----------
-.. [Fra2017] Franceschi, Luca, et al. "Forward and reverse gradient-based hyperparameter optimization." International Conference on Machine Learning. PMLR, 2017.
-.. |Build Status| image:: https://github.com/benchopt/benchmark_bilevel/workflows/Tests/badge.svg
-   :target: https://github.com/benchopt/benchmark_bilevel/actions
-.. |Python 3.6+| image:: https://img.shields.io/badge/python-3.6%2B-blue
-   :target: https://www.python.org/downloads/release/python-360/
